@@ -1,11 +1,13 @@
 let express = require('express');
 let server = express();
+let cors = require('cors');
 let bodyParser = require('body-parser');
 let routes = require('./routes/route.js');
 let mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
 
 server.set('secretKey', 'nodeRestApi'); // jwt secret token
+server.use(cors());
 
 //Database configuration
 mongoose.connect('mongodb+srv://admin:test123@cluster0-dp4oj.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true});
