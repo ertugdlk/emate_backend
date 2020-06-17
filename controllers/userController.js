@@ -18,14 +18,14 @@ exports.create = function (req,res,next) {
                     return res.status(500).send({msg: err.message});
                 }
 
-                // Send the email
+                // Send the email smtp settings
                 let transporter = nodemailer.createTransport({
-                    host: "smtp.sendgrid.net",
+                    host: "in-v3.mailjet.com",
                     port: 587,
                     secure: false,
                     auth: {
-                        user: "apikey",
-                        pass: "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"
+                        user: "9097c768706db61a806e276d5fae327c",
+                        pass: "9713cf459c7299cb562b9c593be77039"
                     }
                 });
                 var mailInfo = {
