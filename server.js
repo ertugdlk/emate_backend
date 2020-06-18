@@ -5,12 +5,13 @@ let bodyParser = require('body-parser');
 let routes = require('./routes/route.js');
 let mongoose = require('mongoose');
 var jwt = require('jsonwebtoken');
+var config = require('./config/config.js')
 
 server.set('secretKey', 'nodeRestApi'); // jwt secret token
 server.use(cors());
 
 //Database configuration
-mongoose.connect('mongodb+srv://admin:test123@cluster0-dp4oj.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true});
+mongoose.connect(config.dbConfig.uri, { useNewUrlParser: true});
 var db = mongoose.connection;
 
 server.use(bodyParser.urlencoded({

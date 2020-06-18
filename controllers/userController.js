@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 const Token = require('../models/verificationtoken.js');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto')
+var config = require('../config/config.js')
 
 //Add user to database function CREATE
 exports.create = function (req,res,next) {
@@ -24,8 +25,8 @@ exports.create = function (req,res,next) {
                     port: 587,
                     secure: false,
                     auth: {
-                        user: "9097c768706db61a806e276d5fae327c",
-                        pass: "9713cf459c7299cb562b9c593be77039"
+                        user: config.mailConfig.user,
+                        pass: config.mailConfig.pass,
                     }
                 });
                 var mailInfo = {
