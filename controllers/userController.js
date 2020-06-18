@@ -48,13 +48,20 @@ exports.authenticate = function (req,res,next) {
     User.findOne({email: req.body.email}, function (err, userInfo) {
         if (err) {
             next(err);
-        } else {
-            if(bcrypt.compare(req.body.password, userInfo.password)) {
-                const tok = jwt.sign({id: userInfo._id}, req.app.get('secretKey'), { expiresIn: '1h' });
-                res.json({status:"success", message: "user found!", data:{user: userInfo, token:tok}});
+        }
+        else {
+            if(!userInfo.isVerified){
+                res.json({status:"failed" , message:"Email is not verified"})
             }
             else{
-                res.json({status:"error", message: "Invalid email/password!!!", data:null});
+                if(bcrypt.compare(req.body.password, userInfo.password)) {
+                    const tok = jwt.sign({id: userInfo._id}, req.app.get('secretKey'), { expiresIn: '1h' });
+                    res.json({status:"success", message: "user found!", data:{user: userInfo, token:tok}});
+                }
+
+                else{
+                    res.json({status:"error", message: "Invalid email/password!!!", data:null});
+                }
             }
         }
     });
@@ -63,21 +70,21 @@ exports.authenticate = function (req,res,next) {
 exports.confirmation = function(req,res,next) {
     Token.findOne({token: req.body.token} ,function (err,token) {
         if(!token)
-            return res.status(400).send({type:'not-verified' , msg: 'we were unable to find a valid token or token expired'})
+            return res.json({type:'not-verified' , msg: 'we were unable to find a valid token or token expired'})
 
         User.findOne({_id : token._userId } , function (err,user) {
             if(!user)
-                return res.status(400).send({type:'no-token' ,msg:'we were unable to find a user for this token'})
+                return res.json({type:'no-token' ,msg:'we were unable to find a user for this token'})
             if(user.isVerified)
-                return res.status(400).send({type: 'already-verified' , msg:'this user already verified'})
+                return res.json({type: 'already-verified' , msg:'this user already verified'})
 
             //verify user and save it
             user.isVerified = true;
             user.save(function (err) {
-                if(err){
-                    return res.status(500).send({ msg: err.message });
+                if(err) {
+                    return res.json({msg: err.message});
                 }
-                res.status(200).send("the account has been verified.Please log in")
+                res.json({msg :"the account has been verified.Please log in"})
             });
         });
     });
